@@ -1,7 +1,7 @@
 {
   "version": 3,
   "sources": ["../index.ts"],
-  "sourcesContent": ["const fs = require('fs');\n\nconst allFileContents = fs.readFileSync('Input.txt', 'utf-8');\nallFileContents.split(/\\r?\\n/).forEach(line =>  {\n  console.log(`Line from file: ${line}`);\n});"],
-  "mappings": "AAAA,MAAM,KAAK,QAAQ;AAEnB,MAAM,kBAAkB,GAAG,aAAa,aAAa;AACrD,gBAAgB,MAAM,SAAS,QAAQ,UAAS;AAC9C,UAAQ,IAAI,mBAAmB;AAAA;",
+  "sourcesContent": ["import fs from 'fs';\n\nenum Direction {\n    Up = 1,\n    Down,\n    Left,\n    Right,\n}\n\nclass TreeVisibilityCounter {\n    treeVisibility: number[][];\n    direction: Direction;\n\n    constructor(direction: Direction, length: number) {\n        this.direction = direction;\n        this.treeVisibility = new Array(length);\n        for (let i = 0; i < length; i++) {\n            this.treeVisibility[i] = [];\n        }\n    }\n\n    countLines() {\n        console.log(this.treeVisibility.length);\n    }\n}\n\n\nfunction readFile(fileName: string): [string] {\n    const allFileContents = fs.readFileSync(fileName, 'utf-8');\n    var lines: [string] = allFileContents.split(/\\r?\\n/);\n    lines.forEach(line => {\n        console.log(`Line from file: ${line}`);\n    });\n\n    return lines;\n}\n\nvar lines = readFile('Input.txt');\nconsole.log(lines.length)\n\nvar tvc = new TreeVisibilityCounter(Direction.Down, lines.length);\ntvc.countLines();"],
+  "mappings": ";;;;;;;;;;;;;;;;;;AAAA,gBAAe;AAEf,IAAK;AAAL,UAAK,YAAL;AACI,gCAAK,KAAL;AACA;AACA;AACA;AAAA,GAJC;AAOL,4BAA4B;AAAA,EACxB;AAAA,EACA;AAAA,EAEA,YAAY,WAAsB,QAAgB;AAC9C,SAAK,YAAY;AACjB,SAAK,iBAAiB,IAAI,MAAM;AAChC,aAAS,IAAI,GAAG,IAAI,QAAQ,KAAK;AAC7B,WAAK,eAAe,KAAK;AAAA;AAAA;AAAA,EAIjC,aAAa;AACT,YAAQ,IAAI,KAAK,eAAe;AAAA;AAAA;AAKxC,kBAAkB,UAA4B;AAC1C,QAAM,kBAAkB,kBAAG,aAAa,UAAU;AAClD,MAAI,SAAkB,gBAAgB,MAAM;AAC5C,SAAM,QAAQ,UAAQ;AAClB,YAAQ,IAAI,mBAAmB;AAAA;AAGnC,SAAO;AAAA;AAGX,IAAI,QAAQ,SAAS;AACrB,QAAQ,IAAI,MAAM;AAElB,IAAI,MAAM,IAAI,sBAAsB,GAAgB,MAAM;AAC1D,IAAI;",
   "names": []
 }
