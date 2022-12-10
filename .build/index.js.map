@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../index.ts"],
+  "sourcesContent": ["const fs = require('fs');\n\nconst allFileContents = fs.readFileSync('Input.txt', 'utf-8');\nallFileContents.split(/\\r?\\n/).forEach(line =>  {\n  console.log(`Line from file: ${line}`);\n});"],
+  "mappings": "AAAA,MAAM,KAAK,QAAQ;AAEnB,MAAM,kBAAkB,GAAG,aAAa,aAAa;AACrD,gBAAgB,MAAM,SAAS,QAAQ,UAAS;AAC9C,UAAQ,IAAI,mBAAmB;AAAA;",
+  "names": []
+}
