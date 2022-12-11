@@ -24,14 +24,28 @@ class TreeVisibilityCounter {
     }
 
     containsTree(x: number, y: number) {
-        
+
     }
 
     addTree(x: number, y: number) {
-        
+
     }
 }
 
+class Location {
+    baseIndex: number;
+    subIndex: number;
+
+    constructor(direction: Direction, sizeX: number, sizeY: number, x: number, y: number) {
+        if (direction == Direction.Up || direction == Direction.Down) {
+            this.baseIndex = x;
+            this.subIndex = y;
+        } else {
+            this.baseIndex = y;
+            this.subIndex = x;
+        }
+    }
+}
 
 function readFile(fileName: string): [string] {
     const allFileContents = fs.readFileSync(fileName, 'utf-8');
