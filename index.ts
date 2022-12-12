@@ -120,7 +120,7 @@ class TreeVisibilityCounter {
     }
 }
 
-function readFile(fileName: string): [string] {
+function readFile(fileName: string): string[] {
     const allFileContents = fs.readFileSync(fileName, 'utf-8');
     var lines: [string] = allFileContents.split(/\r?\n/);
     lines.forEach(line => {
@@ -130,17 +130,31 @@ function readFile(fileName: string): [string] {
     return lines;
 }
 
+function getMaxViewingDistance(lines: string[]): number {
+    var maxViewingDistance = 0;
+
+    for (let y = 0; y < lines.length; y++)
+        for (let x = 0; x < lines[y].length; x++) {
+            var up = viewingDistance(x, y, Direction.Up);
+            var down = viewingDistance(x, y, Direction.Down);
+            var left = viewingDistance(x, y, Direction.Left);
+            var right = viewingDistance(x, y, Direction.Right);
+
+            var res = up * down * left * right;
+
+            if (res > maxViewingDistance)
+                maxViewingDistance = res;
+        }
+
+    return maxViewingDistance;
+}
+
+function viewingDistance(x: number, y: number, direction: Direction): number {
+    return 1; // Continue here
+}
+
 var lines = readFile('Input.txt');
+var maxView = getMaxViewingDistance(lines);
 
-var down = new TreeVisibilityCounter(Direction.Down, lines);
-var up = new TreeVisibilityCounter(Direction.Up, lines);
-var left = new TreeVisibilityCounter(Direction.Left, lines);
-var right = new TreeVisibilityCounter(Direction.Right, lines);
+console.log(maxView);
 
-
-var countUp = up.countTrees([]);
-var countDown = down.countTrees([up]);
-var countLeft = left.countTrees([down, up]);
-var countRight = right.countTrees([down, up, left]);
-
-console.log(countUp + countDown + countLeft + countRight);

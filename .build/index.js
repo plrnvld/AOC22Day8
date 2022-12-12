@@ -121,14 +121,24 @@ function readFile(fileName) {
   });
   return lines2;
 }
+function getMaxViewingDistance(lines2) {
+  var maxViewingDistance = 0;
+  for (let y = 0; y < lines2.length; y++)
+    for (let x = 0; x < lines2[y].length; x++) {
+      var up = viewingDistance(x, y, 2);
+      var down = viewingDistance(x, y, 1);
+      var left = viewingDistance(x, y, 3);
+      var right = viewingDistance(x, y, 4);
+      var res = up * down * left * right;
+      if (res > maxViewingDistance)
+        maxViewingDistance = res;
+    }
+  return maxViewingDistance;
+}
+function viewingDistance(x, y, direction) {
+  return 1;
+}
 var lines = readFile("Input.txt");
-var down = new TreeVisibilityCounter(1, lines);
-var up = new TreeVisibilityCounter(2, lines);
-var left = new TreeVisibilityCounter(3, lines);
-var right = new TreeVisibilityCounter(4, lines);
-var countUp = up.countTrees([]);
-var countDown = down.countTrees([up]);
-var countLeft = left.countTrees([down, up]);
-var countRight = right.countTrees([down, up, left]);
-console.log(countUp + countDown + countLeft + countRight);
+var maxView = getMaxViewingDistance(lines);
+console.log(maxView);
 //# sourceMappingURL=index.js.map
