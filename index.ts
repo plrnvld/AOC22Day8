@@ -7,130 +7,27 @@ enum Direction {
     Right,
 }
 
-class TreeVisibilityCounter {
-    treeVisibility: number[][];
-    direction: Direction;
-    maxLength: number;
-
-    constructor(direction: Direction, lines: string[]) {
-        this.direction = direction;
-        this.maxLength = lines.length;
-        this.treeVisibility = new Array(this.maxLength);
-        for (let i = 0; i < this.maxLength; i++) {
-            this.treeVisibility[i] = [];
-        }
-
-        this.addVisibities(lines);
-    }
-
-    countLines() {
-        console.log(this.treeVisibility.length);
-    }
-
-    containsTree(x: number, y: number) {
-        if (this.checkVertical())
-            return this.treeVisibility[x].includes(y);
-
-        return this.treeVisibility[y].includes(x);
-    }
-
-    addTree(x: number, y: number) {        
-        var index = this.checkVertical() ? x : y;
-        var item = this.checkVertical() ? y : x;
-
-        var positions = this.treeVisibility[index];
-        if (!positions.includes(item))
-            positions.push(item); 
-    }
-
-    addVisibities(lines: string[]) {
-        for (let i = 0; i < this.maxLength; i++) {
-            this.addVisibility(i, lines);
-        }
-    }
-
-    addVisibility(index: number, lines: string[]) {
-        var maxHeight = -1;
-
-        for (let i = 0; i < this.maxLength; i++) {
-            var [x, y] = this.getXY(index, i);
-            var treeHeight = parseInt(lines[y][x]);
-
-            if (treeHeight > maxHeight) {
-                this.addTree(x, y);
-
-                maxHeight = treeHeight;
-
-                if (maxHeight == 9)
-                    return;
-            }        
-        }
-    }
-
-    getXY(index: number, step: number): [number, number] {
-        if (this.direction == Direction.Left) {
-            return [step, index];
-        } else if (this.direction == Direction.Right) {
-            return [this.maxLength - 1 - step, index];
-        } else if (this.direction == Direction.Up) {
-            return [index, step];
-        } else { // Down
-            return [index, this.maxLength - 1 - step];
-        }
-    }
-
-    checkVertical(): boolean {
-        return this.direction == Direction.Up || this.direction == Direction.Down;
-    }
-
-    checkHorizontal(): boolean {
-        return !this.checkVertical();
-    }
-
-    countTrees(notIn: TreeVisibilityCounter[]) {
-        var count = 0;
-
-        for (let index = 0; index < this.maxLength; index++) {
-            for (let j = 0; j < this.treeVisibility[index].length; j++) {
-                var offset = this.treeVisibility[index][j];
-
-                var [x, y] = this.checkVertical() ? [index, offset] : [offset, index];
-                
-                if (!notIn.some(tvc => tvc.containsTree(x, y))) {
-                    count++;
-                }             
-            }
-        }
-
-        return count;
-    }
-
-    printDict() {
-        for (let index = 0; index < this.maxLength; index++) {
-            console.log("Index = " + index);
-            for (let j = 0; j < this.treeVisibility[index].length; j++) {
-                var treeOffset = this.treeVisibility[index][j];
-                
-                if (this.checkVertical())
-                    console.log(`  (${index},${treeOffset})`);
-                else
-                    console.log(`  (${treeOffset},${index})`);
-            }
-        }
-    }
+enum TreeView {
+    Visible = 1,
+    Invisible,
+    End
 }
 
-function readFile(fileName: string): string[] {
+function readFile(fileName: string): int[][] {
     const allFileContents = fs.readFileSync(fileName, 'utf-8');
-    var lines: [string] = allFileContents.split(/\r?\n/);
+    var lines: string[] = allFileContents.split(/\r?\n/);
+    
+
+    var heights: int[][] = [];
     lines.forEach(line => {
-        console.log(`Line from file: ${line}`);
+        var height = line.split().map(c => parseInt(c))
+        heights.push(height);
     });
 
-    return lines;
+    return heights;
 }
 
-function getMaxViewingDistance(lines: string[]): number {
+function getMaxViewingDistance(lines: int[][]): number {
     var maxViewingDistance = 0;
 
     for (let y = 0; y < lines.length; y++)
@@ -149,12 +46,45 @@ function getMaxViewingDistance(lines: string[]): number {
     return maxViewingDistance;
 }
 
-function viewingDistance(x: number, y: number, direction: Direction): number {
-    return 1; // Continue here
+function viewingDistance(heights: int[][], x: number, y: number, direction: Direction): number {
+    var treeHutHeight = heights[y][x];
+
+    var dist = 0;
+    
+    for (let i = 1; ;i++ ) {
+        var [xNext, yNext] = getPos(x, y, direction, i);
+
+        if (itStopsHere(heights, x, y, treeHutHeight))
+    }
 }
 
-var lines = readFile('Input.txt');
-var maxView = getMaxViewingDistance(lines);
+function itStopsHere(heights: int[][], x: number, y: number, treeHutHeight: number, currMaxHeight: number): TreeView {
+    if (x < 0 || x >= heights[0].length || y < 0 || y >= heights.length)
+        return TreeView.End;
+
+    if (prevHeight >= treeHutHeight)
+        return TreeView.End;
+
+    var treeHeight = heights[y][x];
+    if (treeHi)
+
+        // #########################
+} 
+
+function getPos(x: number, y:number, direction: Direction, step: number): [number, number] {
+    if (direction == Direction.Right) {
+        return [x + step, y];
+    } else if (direction == Direction.Left) {
+        return [x - step, y];
+    } else if (direction == Direction.Up) {
+        return [x, y - step]; 
+    } else { // Down
+        return [x, y + step];         
+    }
+}
+
+var heights = readFile('Example.txt');
+var maxView = getMaxViewingDistance(heights);
 
 console.log(maxView);
 
