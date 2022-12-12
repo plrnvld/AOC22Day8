@@ -35,8 +35,11 @@ class TreeVisibilityCounter {
     }
 
     addTree(x: number, y: number) {        
-        var index = this.checkHorizontal() ? y : x;
-        var item = this.checkHorizontal() ? x : y;
+        var index = this.checkVertical() ? x : y;
+        var item = this.checkVertical() ? y : x;
+
+        // if (this.direction == Direction.Down)
+        //     console.log(` >>>> Pushing for index ${index} => ${y}`)
 
         var positions = this.treeVisibility[index];
         if (!positions.includes(item))
@@ -58,6 +61,9 @@ class TreeVisibilityCounter {
 
             if (treeHeight > maxHeight) {
                 this.addTree(x, y);
+
+                // if (this.direction == Direction.Down)
+                //     console.log(` >> Adding tree (${x},${y})`)
 
                 maxHeight = treeHeight;
 
@@ -110,10 +116,11 @@ class TreeVisibilityCounter {
             console.log("Index = " + index);
             for (let j = 0; j < this.treeVisibility[index].length; j++) {
                 var treeOffset = this.treeVisibility[index][j];
-                var pos = this.getXY(index, treeOffset);
-                var x = pos[0];
-                var y = pos[1];
-                console.log(`  (${x},${y})`);                
+                
+                if (this.checkVertical())
+                    console.log(`  (${index},${treeOffset})`);
+                else
+                    console.log(`  (${treeOffset},${index})`);
             }
         }
     }
@@ -138,11 +145,13 @@ var right = new TreeVisibilityCounter(Direction.Right, lines);
 
 
 console.log("UP SINGLE: " + up.countTrees([]));
-up.printDict();
+// up.printDict();
 console.log("DOWN SINGLE: " + down.countTrees([]));
 // down.printDict();
 console.log("LEFT SINGLE: " + left.countTrees([]));
+// left.printDict();
 console.log("RIGHT SINGLE: " + right.countTrees([]));
+right.printDict();
 
 
 var countDown = down.countTrees([]);
