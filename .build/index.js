@@ -88,7 +88,6 @@ class TreeVisibilityCounter {
     return !this.checkVertical();
   }
   countTrees(notIn) {
-    console.log(`** Counting ${Direction[this.direction]}`);
     var count = 0;
     for (let index = 0; index < this.maxLength; index++) {
       for (let j = 0; j < this.treeVisibility[index].length; j++) {
@@ -96,7 +95,6 @@ class TreeVisibilityCounter {
         var [x, y] = this.checkVertical() ? [index, offset] : [offset, index];
         if (!notIn.some((tvc) => tvc.containsTree(x, y))) {
           count++;
-        } else {
         }
       }
     }
@@ -123,7 +121,7 @@ function readFile(fileName) {
   });
   return lines2;
 }
-var lines = readFile("Example.txt");
+var lines = readFile("Input.txt");
 var down = new TreeVisibilityCounter(1, lines);
 var up = new TreeVisibilityCounter(2, lines);
 var left = new TreeVisibilityCounter(3, lines);
