@@ -1,8 +1,8 @@
 import fs from 'fs';
 
 enum Direction {
-    Up = 1,
-    Down,
+    Down = 1,
+    Up,
     Left,
     Right,
 }
@@ -28,7 +28,7 @@ class TreeVisibilityCounter {
     }
 
     containsTree(x: number, y: number) {
-        if (this.checkHorizontal())
+        if (this.checkVertical())
             return this.treeVisibility[x].includes(y);
 
         return this.treeVisibility[y].includes(x);
@@ -94,17 +94,21 @@ class TreeVisibilityCounter {
     }
 
     countTrees(notIn: TreeVisibilityCounter[]) {
+        console.log(`** Counting ${Direction[this.direction]}`)
         var count = 0;
 
         for (let index = 0; index < this.maxLength; index++) {
             for (let j = 0; j < this.treeVisibility[index].length; j++) {
-                var subCoord = this.treeVisibility[index][j];
+                var offset = this.treeVisibility[index][j];
 
-                var [x, y] = this.checkHorizontal() ? [subCoord, index] : [index, subCoord];
+                var [x, y] = this.checkVertical() ? [index, offset] : [offset, index];
                 
                 if (!notIn.some(tvc => tvc.containsTree(x, y))) {
+                    // console.log(`    Counting (${x},${y})`)
                     count++;
-                }               
+                } else {
+                    // console.log(`    (${x},${y}) has been counted before`)
+                }              
             }
         }
 
@@ -144,20 +148,21 @@ var left = new TreeVisibilityCounter(Direction.Left, lines);
 var right = new TreeVisibilityCounter(Direction.Right, lines);
 
 
-console.log("UP SINGLE: " + up.countTrees([]));
+//console.log("UP SINGLE: " + up.countTrees([]));
 // up.printDict();
-console.log("DOWN SINGLE: " + down.countTrees([]));
+//console.log("DOWN SINGLE: " + down.countTrees([]));
 // down.printDict();
-console.log("LEFT SINGLE: " + left.countTrees([]));
+//console.log("LEFT SINGLE: " + left.countTrees([]));
 // left.printDict();
-console.log("RIGHT SINGLE: " + right.countTrees([]));
-right.printDict();
+//console.log("RIGHT SINGLE: " + right.countTrees([]));
+//right.printDict();
 
 
-var countDown = down.countTrees([]);
-var countUp = up.countTrees([down]);
+var countUp = up.countTrees([]);
+var countDown = down.countTrees([up]);
+
 
 var countLeft = left.countTrees([down, up]);
 var countRight = right.countTrees([down, up, left]);
 
-console.log(countDown + countUp + countLeft + countRight);
+console.log(countUp + countDown + countLeft + countRight);
