@@ -27,15 +27,90 @@ var Direction;
 class TreeVisibilityCounter {
   treeVisibility;
   direction;
-  constructor(direction, length) {
+  maxLength;
+  constructor(direction, lines2) {
     this.direction = direction;
-    this.treeVisibility = new Array(length);
-    for (let i = 0; i < length; i++) {
+    this.maxLength = lines2.length;
+    this.treeVisibility = new Array(this.maxLength);
+    for (let i = 0; i < this.maxLength; i++) {
       this.treeVisibility[i] = [];
     }
+    this.addVisibities(lines2);
   }
   countLines() {
     console.log(this.treeVisibility.length);
+  }
+  containsTree(x, y) {
+    if (this.checkHorizontal())
+      return this.treeVisibility[x].includes(y);
+    return this.treeVisibility[y].includes(x);
+  }
+  addTree(x, y) {
+    var index = this.checkHorizontal() ? y : x;
+    var item = this.checkHorizontal() ? x : y;
+    var positions = this.treeVisibility[index];
+    if (!positions.includes(item))
+      positions.push(item);
+  }
+  addVisibities(lines2) {
+    for (let i = 0; i < this.maxLength; i++) {
+      this.addVisibility(i, lines2);
+    }
+  }
+  addVisibility(index, lines2) {
+    var maxHeight = -1;
+    for (let i = 0; i < this.maxLength; i++) {
+      var [x, y] = this.getXY(index, i);
+      var treeHeight = parseInt(lines2[y][x]);
+      if (treeHeight > maxHeight) {
+        this.addTree(x, y);
+        maxHeight = treeHeight;
+        if (maxHeight == 9)
+          return;
+      }
+    }
+  }
+  getXY(index, step) {
+    if (this.direction == 3) {
+      return [step, index];
+    } else if (this.direction == 4) {
+      return [this.maxLength - 1 - step, index];
+    } else if (this.direction == 1) {
+      return [index, step];
+    } else {
+      return [index, this.maxLength - 1 - step];
+    }
+  }
+  checkVertical() {
+    return this.direction == 1 || this.direction == 2;
+  }
+  checkHorizontal() {
+    return !this.checkVertical();
+  }
+  countTrees(notIn) {
+    var count = 0;
+    for (let index = 0; index < this.maxLength; index++) {
+      for (let j = 0; j < this.treeVisibility[index].length; j++) {
+        var subCoord = this.treeVisibility[index][j];
+        var [x, y] = this.checkHorizontal() ? [subCoord, index] : [index, subCoord];
+        if (!notIn.some((tvc) => tvc.containsTree(x, y))) {
+          count++;
+        }
+      }
+    }
+    return count;
+  }
+  printDict() {
+    for (let index = 0; index < this.maxLength; index++) {
+      console.log("Index = " + index);
+      for (let j = 0; j < this.treeVisibility[index].length; j++) {
+        var treeOffset = this.treeVisibility[index][j];
+        var pos = this.getXY(index, treeOffset);
+        var x = pos[0];
+        var y = pos[1];
+        console.log(`  (${x},${y})`);
+      }
+    }
   }
 }
 function readFile(fileName) {
@@ -46,8 +121,19 @@ function readFile(fileName) {
   });
   return lines2;
 }
-var lines = readFile("Input.txt");
-console.log(lines.length);
-var tvc = new TreeVisibilityCounter(2, lines.length);
-tvc.countLines();
+var lines = readFile("Example.txt");
+var down = new TreeVisibilityCounter(2, lines);
+var up = new TreeVisibilityCounter(1, lines);
+var left = new TreeVisibilityCounter(3, lines);
+var right = new TreeVisibilityCounter(4, lines);
+console.log("UP SINGLE: " + up.countTrees([]));
+up.printDict();
+console.log("DOWN SINGLE: " + down.countTrees([]));
+console.log("LEFT SINGLE: " + left.countTrees([]));
+console.log("RIGHT SINGLE: " + right.countTrees([]));
+var countDown = down.countTrees([]);
+var countUp = up.countTrees([down]);
+var countLeft = left.countTrees([down, up]);
+var countRight = right.countTrees([down, up, left]);
+console.log(countDown + countUp + countLeft + countRight);
 //# sourceMappingURL=index.js.map
