@@ -24,96 +24,73 @@ var Direction;
   Direction2[Direction2["Left"] = 3] = "Left";
   Direction2[Direction2["Right"] = 4] = "Right";
 })(Direction || (Direction = {}));
-var TreeView;
-(function(TreeView2) {
-  TreeView2[TreeView2["Visible"] = 1] = "Visible";
-  TreeView2[TreeView2["Invisible"] = 2] = "Invisible";
-  TreeView2[TreeView2["End"] = 3] = "End";
-})(TreeView || (TreeView = {}));
 function readFile(fileName) {
   const allFileContents = import_fs.default.readFileSync(fileName, "utf-8");
-  var lines = allFileContents.split(/\r?\n/);
-  var heights2 = [];
+  let lines = allFileContents.split(/\r?\n/);
+  let heights2 = [];
   lines.forEach((line) => {
-    var height = line.split("").map((c) => parseInt(c));
+    let height = line.split("").map((c) => parseInt(c));
     console.log(height.map((n) => n + "").join(""));
     heights2.push(height);
   });
   return heights2;
 }
 function getMaxViewingDistance(heights2) {
-  var maxViewingDistance = 0;
-  for (let y = 0; y < heights2.length; y++)
+  let maxRes = 0;
+  for (let y = 0; y < heights2.length; y++) {
     for (let x = 0; x < heights2[y].length; x++) {
       var up = viewingDistance(heights2, x, y, 2);
       var down = viewingDistance(heights2, x, y, 1);
       var left = viewingDistance(heights2, x, y, 3);
       var right = viewingDistance(heights2, x, y, 4);
-      var res = Math.max(1, up) * Math.max(1, down) * Math.max(1, left) * Math.max(1, right);
-      console.log(`Viewing for (${x},${y}) = ${res}, (${up} ${down} ${left} ${right})`);
-      if (res > maxViewingDistance) {
-        maxViewingDistance = res;
-      }
+      var res = [up, down, left, right].filter((x2) => x2 > 0).reduce((acc, curr) => acc * curr, 1);
+      maxRes = Math.max(res, maxRes);
     }
-  return maxViewingDistance;
+  }
+  return maxRes;
 }
 function viewingDistance(heights2, x, y, direction) {
-  var treeHutHeight = heights2[y][x];
-  var maxHeight = 0;
-  var visible = 0;
-  for (let i = 1; ; i++) {
-    var [xNext, yNext] = getPos(x, y, direction, i);
-    if (!isAccessible(heights2, xNext, yNext))
+  let treeHutHeight = heights2[y][x];
+  let trees = getTreeRow(heights2, x, y, direction);
+  return countVisibleTreesBetter(treeHutHeight, trees);
+  ;
+}
+function getTreeRow(heights2, x, y, direction) {
+  let trees = [];
+  let minX = 0;
+  let maxX = heights2[0].length - 1;
+  let minY = 0;
+  let maxY = heights2.length - 1;
+  let stepX = 0;
+  let stepY = 0;
+  if (direction == 3) {
+    stepX = -1;
+  } else if (direction == 4) {
+    stepX = 1;
+  } else if (direction == 1) {
+    stepY = 1;
+  } else {
+    stepY = -1;
+  }
+  let [nextX, nextY] = [x + stepX, y + stepY];
+  while (nextX >= minX && nextX <= maxX && nextY >= minY && nextY <= maxY) {
+    trees.push(heights2[nextY][nextX]);
+    [nextX, nextY] = [nextX + stepX, nextY + stepY];
+  }
+  return trees;
+}
+function countVisibleTreesBetter(treeHutHeight, trees) {
+  let visible = 0;
+  for (let i = 0; i < trees.length; i++) {
+    let tree = trees[i];
+    visible++;
+    if (tree >= treeHutHeight) {
       return visible;
-    var nextTree = heights2[yNext][xNext];
-    if (canSee(heights2, x, y, xNext, yNext)) {
-      visible++;
-      maxHeight = nextTree;
     }
-    if (nextTree > treeHutHeight)
-      return visible;
   }
+  return visible;
 }
-function canSee(heights2, xTree, yTree, x, y) {
-  var nums = [];
-  var xStep = getStep(xTree, x);
-  var yStep = getStep(yTree, y);
-  var numSteps = Math.abs(xTree - x) + Math.abs(yTree - y);
-  for (let i = 1; i <= numSteps; i++) {
-    var tree = heights2[yTree + yStep * i][xTree + xStep * i];
-    nums.push(tree);
-  }
-  return canSeeNums(nums);
-}
-function getStep(from, to) {
-  if (from == to) {
-    return 0;
-  } else if (from < to) {
-    return 1;
-  } else {
-    return -1;
-  }
-}
-function canSeeNums(nums) {
-  if (nums.length == 1)
-    return true;
-  return false;
-}
-function isAccessible(heights2, x, y) {
-  return x >= 0 && x < heights2[0].length && y >= 0 && y < heights2.length;
-}
-function getPos(x, y, direction, step) {
-  if (direction == 4) {
-    return [x + step, y];
-  } else if (direction == 3) {
-    return [x - step, y];
-  } else if (direction == 2) {
-    return [x, y - step];
-  } else {
-    return [x, y + step];
-  }
-}
-var heights = readFile("Example.txt");
-var maxView = getMaxViewingDistance(heights);
+let heights = readFile("Input.txt");
+let maxView = getMaxViewingDistance(heights);
 console.log(maxView);
 //# sourceMappingURL=index.js.map
