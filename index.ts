@@ -64,7 +64,7 @@ function getTreeRow(heights: number[][], x: number, y: number, direction: Direct
     } else if (direction == Direction.Down) {
         stepY = 1;
     } else {
-        stepY = -1
+        stepY = -1;
     }
 
     let [nextX, nextY] = [x + stepX, y + stepY];
@@ -72,7 +72,7 @@ function getTreeRow(heights: number[][], x: number, y: number, direction: Direct
     while (nextX >= minX && nextX <= maxX && nextY >= minY && nextY <= maxY) {
         trees.push(heights[nextY][nextX]);
         
-        [nextX, nextY] = [nextX + stepX, nextY + stepY]
+        [nextX, nextY] = [nextX + stepX, nextY + stepY];
     }
 
     return trees;
